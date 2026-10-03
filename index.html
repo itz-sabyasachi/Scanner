@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShieldVerify — Proof Scanner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div>
+        <div class="brand-name">ShieldVerify</div>
+        <div class="brand-sub">Proof Scanner · Verifier</div>
+      </div>
+    </div>
+    <div class="vk-pill" id="vkPill"><span class="dot"></span><span id="vkText">Loading key…</span></div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <span class="eyebrow">VERIFIER MODE</span>
+      <h1>Scan a proof.<br><span>Verify it instantly.</span></h1>
+      <p>Point the camera at a ShieldVerify QR. The Groth16 proof is checked on this device against your verification key — no answers, no identity, no server.</p>
+    </section>
+
+    <section class="grid">
+      <!-- Scanner -->
+      <div class="card scan-card">
+        <div class="viewport" id="viewport">
+          <video id="video" playsinline muted></video>
+          <canvas id="canvas" hidden></canvas>
+          <div class="frame" id="frame"><i></i><i></i><i></i><i></i><span class="laser"></span></div>
+          <div class="placeholder" id="placeholder">
+            <div class="ph-icon">▣</div>
+            <p>Camera is off</p>
+          </div>
+        </div>
+
+        <div class="status" id="scanStatus" aria-live="polite">Ready to scan</div>
+
+        <div class="actions">
+          <button class="btn primary" id="startBtn" type="button">Start camera</button>
+          <button class="btn" id="stopBtn" type="button" hidden>Stop</button>
+          <button class="btn" id="switchBtn" type="button" hidden>Flip</button>
+          <label class="btn" for="fileInput">Upload image</label>
+          <input id="fileInput" type="file" accept="image/*" hidden />
+        </div>
+
+        <div class="diag" id="diag">Decoder: checking…</div>
+
+        <details class="manual">
+          <summary>Paste QR payload manually</summary>
+          <textarea id="manualText" rows="4" placeholder='{"v":1,"s":"…","a":[…],"b":[…],"c":[…],"n":[…]}'></textarea>
+          <button class="btn" id="manualBtn" type="button">Verify payload</button>
+        </details>
+      </div>
+
+      <!-- Result -->
+      <div class="card result-card" id="resultCard">
+        <div class="empty" id="emptyState">
+          <div class="ph-icon">✓</div>
+          <h3>Waiting for a proof</h3>
+          <p>Verification results appear here.</p>
+        </div>
+
+        <div class="result hidden" id="result">
+          <div class="badge" id="badge">✓</div>
+          <span class="eyebrow" id="resEyebrow">PROOF VERIFIED</span>
+          <h2 id="resTitle">Valid proof</h2>
+          <p class="res-text" id="resText"></p>
+
+          <dl class="facts" id="facts"></dl>
+
+          <details class="signals">
+            <summary>Public signals (<span id="sigCount">0</span>)</summary>
+            <ol id="sigList"></ol>
+          </details>
+
+          <div class="actions">
+            <button class="btn primary" id="againBtn" type="button">Scan next</button>
+            <button class="btn" id="copyBtn" type="button">Copy JSON</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card history">
+      <div class="hist-head">
+        <h3>Session log</h3>
+        <button class="link" id="clearBtn" type="button">Clear</button>
+      </div>
+      <ul id="histList"><li class="muted">No scans yet.</li></ul>
+    </section>
+  </main>
+
+  <footer class="footer"><span>ShieldVerify</span><span>Verification runs locally · Groth16 / BN128</span></footer>
+</div>
+
+<!-- snarkjs (same file used by the wallet) -->
+<script src="./snarkjs.min.js"></script>
+<!-- jsQR: loads local copy first, then CDN fallback (handled in scanner.js) -->
+<script src="./scanner.js" defer></script>
+</body>
+</html>
